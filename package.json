@@ -1,0 +1,24 @@
+{
+  "name": "textlint-plugin-satsuki",
+  "version": "1.0.0",
+  "description": "Satsuki notation support for textlint",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/7pairs/textlint-plugin-satsuki.git"
+  },
+  "keywords": [
+    "textlint",
+    "plugin",
+    "satsuki"
+  ],
+  "author": "Jun-ya HASEBA",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/7pairs/textlint-plugin-satsuki/issues"
+  },
+  "homepage": "https://github.com/7pairs/textlint-plugin-satsuki"
+}
