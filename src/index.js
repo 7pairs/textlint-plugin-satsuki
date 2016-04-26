@@ -1,5 +1,5 @@
 "use strict";
 
-export default function dummy() {
-    return true;
-}
+export default {
+    Processor: require("./SatsukiProcessor")
+};
