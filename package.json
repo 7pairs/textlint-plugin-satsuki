@@ -5,7 +5,8 @@
   "main": "lib/index.js",
   "files": [
     "lib",
-    "src"
+    "src",
+    "test"
   ],
   "directories": {
     "test": "test"
