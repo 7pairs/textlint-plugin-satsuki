@@ -77,7 +77,7 @@ export default class SatsukiProcessor {
                         let tag = null;
                         while (tag = regexp.exec(result.children[i].raw)) {
                             this.ignoreColumns[result.children[i].loc.start.line - 1].push(
-                                [regexp.lastIndex - tag.length, regexp.lastIndex - 1]
+                                [tag.index + 1, regexp.lastIndex]
                             );
                         }
                     }
