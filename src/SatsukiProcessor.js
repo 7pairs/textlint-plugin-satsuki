@@ -30,7 +30,7 @@ export default class SatsukiProcessor {
         ];
     }
 
-    static get TAGS() {
+    static get BLOCK_TAGS() {
         return [
             [/>>/, "<<"],
             [/>>\|/, "|<<"],
@@ -50,36 +50,57 @@ export default class SatsukiProcessor {
             preProcess: (text, filePath) => {
                 const result = parse(text);
                 this.ignoreLines = new Array(result.loc.end.line);
+                this.ignoreColumns = new Array(result.loc.end.line);
+                for (let i = 0; i < this.ignoreColumns.length; i++) {
+                    this.ignoreColumns[i] = new Array();
+                }
 
-                let isBlock = false;
+                let inBlock = false;
                 let endTag = null;
                 for (let i = 0; i < result.children.length; i++) {
-                    if (!isBlock) {
-                        for (let j = 0; j < SatsukiProcessor.TAGS.length; j++) {
-                            if (result.children[i].raw.match(SatsukiProcessor.TAGS[j][0])) {
-                                isBlock = true;
-                                endTag = SatsukiProcessor.TAGS[j][1];
+                    if (!inBlock) {
+                        for (let j = 0; j < SatsukiProcessor.BLOCK_TAGS.length; j++) {
+                            if (result.children[i].raw.match(SatsukiProcessor.BLOCK_TAGS[j][0])) {
+                                inBlock = true;
+                                endTag = SatsukiProcessor.BLOCK_TAGS[j][1];
                                 break;
                             }
                         }
                     }
-                    if (isBlock) {
+                    if (inBlock) {
                         if (result.children[i].raw === endTag) {
-                            isBlock = false;
+                            inBlock = false;
                         }
                         this.ignoreLines[result.children[i].loc.start.line - 1] = true;
+                    } else {
+                        const regexp = /\[[^\]]+\]/g;
+                        let tag = null;
+                        while (tag = regexp.exec(result.children[i].raw)) {
+                            this.ignoreColumns[result.children[i].loc.start.line - 1].push(
+                                [regexp.lastIndex - tag.length, regexp.lastIndex - 1]
+                            );
+                        }
                     }
                 }
 
                 return result;
             },
             postProcess: (messages, filePath) => {
-                const validMessages = messages.filter((message) => {
-                    return this.ignoreLines[message.line - 1] !== true;
+                const activeMessages = messages.filter((message) => {
+                    if (this.ignoreLines[message.line - 1]) {
+                        return false;
+                    }
+                    for (let i = 0; i < this.ignoreColumns[message.line - 1].length; i++) {
+                        const ignoreColumn = this.ignoreColumns[message.line - 1][i];
+                        if (ignoreColumn[0] <= message.column && ignoreColumn[1] >= message.column) {
+                            return false;
+                        }
+                    }
+                    return true;
                 });
 
                 return {
-                    messages: validMessages,
+                    messages: activeMessages,
                     filePath: filePath ? filePath : "<text>"
                 };
             }
