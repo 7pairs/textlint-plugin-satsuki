@@ -35,7 +35,7 @@ describe("SatsukiProcessor", function () {
                 ">>\n" +
                 "TODO: this is todo\n" +
                 "<<\n";
-            textlint.lintText(target, ".txt").then((result) => {
+            return textlint.lintText(target, ".txt").then((result) => {
                 assert(result.messages.length === 0);
             });
         });
@@ -46,7 +46,7 @@ describe("SatsukiProcessor", function () {
                 "TODO: this is todo\n" +
                 "<<\n" +
                 "TODO: this is todo\n";
-            textlint.lintText(target, ".txt").then((result) => {
+            return textlint.lintText(target, ".txt").then((result) => {
                 assert(result.messages.length === 2);
             });
         });
@@ -57,7 +57,7 @@ describe("SatsukiProcessor", function () {
                 ">>|\n" +
                 "TODO: this is todo\n" +
                 "|<<\n";
-            textlint.lintText(target, ".txt").then((result) => {
+            return textlint.lintText(target, ".txt").then((result) => {
                 assert(result.messages.length === 0);
             });
         });
@@ -68,7 +68,7 @@ describe("SatsukiProcessor", function () {
                 "TODO: this is todo\n" +
                 "|<<\n" +
                 "TODO: this is todo\n";
-            textlint.lintText(target, ".txt").then((result) => {
+            return textlint.lintText(target, ".txt").then((result) => {
                 assert(result.messages.length === 2);
             });
         });
@@ -79,7 +79,7 @@ describe("SatsukiProcessor", function () {
                 ">>||\n" +
                 "TODO: this is todo\n" +
                 "||<<\n";
-            textlint.lintText(target, ".txt").then((result) => {
+            return textlint.lintText(target, ".txt").then((result) => {
                 assert(result.messages.length === 0);
             });
         });
@@ -90,7 +90,7 @@ describe("SatsukiProcessor", function () {
                 "TODO: this is todo\n" +
                 "||<<\n" +
                 "TODO: this is todo\n";
-            textlint.lintText(target, ".txt").then((result) => {
+            return textlint.lintText(target, ".txt").then((result) => {
                 assert(result.messages.length === 2);
             });
         });
@@ -101,7 +101,7 @@ describe("SatsukiProcessor", function () {
                 ">>[https://github.com/7pairs/textlint-plugin-satsuki]\n" +
                 "TODO: this is todo\n" +
                 "<<\n";
-            textlint.lintText(target, ".txt").then((result) => {
+            return textlint.lintText(target, ".txt").then((result) => {
                 assert(result.messages.length === 0);
             });
         });
@@ -112,7 +112,7 @@ describe("SatsukiProcessor", function () {
                 "TODO: this is todo\n" +
                 "<<\n" +
                 "TODO: this is todo\n";
-            textlint.lintText(target, ".txt").then((result) => {
+            return textlint.lintText(target, ".txt").then((result) => {
                 assert(result.messages.length === 2);
             });
         });
@@ -123,7 +123,7 @@ describe("SatsukiProcessor", function () {
                 ">https://github.com/7pairs/textlint-plugin-satsuki>\n" +
                 "TODO: this is todo\n" +
                 "<<\n";
-            textlint.lintText(target, ".txt").then((result) => {
+            return textlint.lintText(target, ".txt").then((result) => {
                 assert(result.messages.length === 0);
             });
         });
@@ -134,7 +134,7 @@ describe("SatsukiProcessor", function () {
                 "TODO: this is todo\n" +
                 "<<\n" +
                 "TODO: this is todo\n";
-            textlint.lintText(target, ".txt").then((result) => {
+            return textlint.lintText(target, ".txt").then((result) => {
                 assert(result.messages.length === 2);
             });
         });
@@ -145,7 +145,7 @@ describe("SatsukiProcessor", function () {
                 ">|\n" +
                 "TODO: this is todo\n" +
                 "|<\n";
-            textlint.lintText(target, ".txt").then((result) => {
+            return textlint.lintText(target, ".txt").then((result) => {
                 assert(result.messages.length === 0);
             });
         });
@@ -156,7 +156,7 @@ describe("SatsukiProcessor", function () {
                 "TODO: this is todo\n" +
                 "|<\n" +
                 "TODO: this is todo\n";
-            textlint.lintText(target, ".txt").then((result) => {
+            return textlint.lintText(target, ".txt").then((result) => {
                 assert(result.messages.length === 2);
             });
         });
@@ -167,7 +167,7 @@ describe("SatsukiProcessor", function () {
                 ">||\n" +
                 "TODO: this is todo\n" +
                 "||<\n";
-            textlint.lintText(target, ".txt").then((result) => {
+            return textlint.lintText(target, ".txt").then((result) => {
                 assert(result.messages.length === 0);
             });
         });
@@ -178,7 +178,7 @@ describe("SatsukiProcessor", function () {
                 "TODO: this is todo\n" +
                 "||<\n" +
                 "TODO: this is todo\n";
-            textlint.lintText(target, ".txt").then((result) => {
+            return textlint.lintText(target, ".txt").then((result) => {
                 assert(result.messages.length === 2);
             });
         });
@@ -189,7 +189,7 @@ describe("SatsukiProcessor", function () {
                 ">||#\n" +
                 "TODO: this is todo\n" +
                 "#||<\n";
-            textlint.lintText(target, ".txt").then((result) => {
+            return textlint.lintText(target, ".txt").then((result) => {
                 assert(result.messages.length === 0);
             });
         });
@@ -200,7 +200,7 @@ describe("SatsukiProcessor", function () {
                 "TODO: this is todo\n" +
                 "#||<\n" +
                 "TODO: this is todo\n";
-            textlint.lintText(target, ".txt").then((result) => {
+            return textlint.lintText(target, ".txt").then((result) => {
                 assert(result.messages.length === 2);
             });
         });
@@ -211,7 +211,7 @@ describe("SatsukiProcessor", function () {
                 ">|?|\n" +
                 "TODO: this is todo\n" +
                 "||<\n";
-            textlint.lintText(target, ".txt").then((result) => {
+            return textlint.lintText(target, ".txt").then((result) => {
                 assert(result.messages.length === 0);
             });
         });
@@ -222,7 +222,7 @@ describe("SatsukiProcessor", function () {
                 "TODO: this is todo\n" +
                 "||<\n" +
                 "TODO: this is todo\n";
-            textlint.lintText(target, ".txt").then((result) => {
+            return textlint.lintText(target, ".txt").then((result) => {
                 assert(result.messages.length === 2);
             });
         });
@@ -233,7 +233,7 @@ describe("SatsukiProcessor", function () {
                 ">|python|\n" +
                 "TODO: this is todo\n" +
                 "||<\n";
-            textlint.lintText(target, ".txt").then((result) => {
+            return textlint.lintText(target, ".txt").then((result) => {
                 assert(result.messages.length === 0);
             });
         });
@@ -244,7 +244,7 @@ describe("SatsukiProcessor", function () {
                 "TODO: this is todo\n" +
                 "||<\n" +
                 "TODO: this is todo\n";
-            textlint.lintText(target, ".txt").then((result) => {
+            return textlint.lintText(target, ".txt").then((result) => {
                 assert(result.messages.length === 2);
             });
         });
