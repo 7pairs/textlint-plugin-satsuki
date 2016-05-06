@@ -49,35 +49,36 @@ export default class SatsukiProcessor {
         return {
             preProcess: (text, filePath) => {
                 const result = parse(text);
-                this.ignoreLines = new Array(result.loc.end.line);
-                this.ignoreColumns = new Array(result.loc.end.line);
-                for (let i = 0; i < this.ignoreColumns.length; i++) {
-                    this.ignoreColumns[i] = new Array();
+                this.ignoreMessages = new Array(result.loc.end.line);
+                for (let i = 0; i < this.ignoreMessages.length; i++) {
+                    this.ignoreMessages[i] = [false, []];
                 }
 
                 let inBlock = false;
                 let endTag = null;
                 for (let i = 0; i < result.children.length; i++) {
+                    const element = result.children[i];
                     if (!inBlock) {
                         for (let j = 0; j < SatsukiProcessor.BLOCK_TAGS.length; j++) {
-                            if (result.children[i].raw.match(SatsukiProcessor.BLOCK_TAGS[j][0])) {
+                            const blockTag = SatsukiProcessor.BLOCK_TAGS[j];
+                            if (element.raw.match(blockTag[0])) {
                                 inBlock = true;
-                                endTag = SatsukiProcessor.BLOCK_TAGS[j][1];
+                                endTag = blockTag[1];
                                 break;
                             }
                         }
                     }
                     if (inBlock) {
-                        if (result.children[i].raw === endTag) {
+                        if (element.raw === endTag) {
                             inBlock = false;
                         }
-                        this.ignoreLines[result.children[i].loc.start.line - 1] = true;
+                        this.ignoreMessages[element.loc.start.line - 1][0] = true;
                     } else {
-                        const regexp = /\[[^\]]+\]/g;
-                        let tag = null;
-                        while (tag = regexp.exec(result.children[i].raw)) {
-                            this.ignoreColumns[result.children[i].loc.start.line - 1].push(
-                                [tag.index + 1, regexp.lastIndex]
+                        const inlineTagPattern = /\[[^\]]+\]/g;
+                        let inlineTag = null;
+                        while (inlineTag = inlineTagPattern.exec(element.raw)) {
+                            this.ignoreMessages[element.loc.start.line - 1][1].push(
+                                [inlineTag.index + 1, inlineTagPattern.lastIndex]
                             );
                         }
                     }
@@ -87,11 +88,12 @@ export default class SatsukiProcessor {
             },
             postProcess: (messages, filePath) => {
                 const activeMessages = messages.filter((message) => {
-                    if (this.ignoreLines[message.line - 1]) {
+                    const ignoreMessage = this.ignoreMessages[message.line - 1];
+                    if (ignoreMessage[0]) {
                         return false;
                     }
-                    for (let i = 0; i < this.ignoreColumns[message.line - 1].length; i++) {
-                        const ignoreColumn = this.ignoreColumns[message.line - 1][i];
+                    for (let i = 0; i < ignoreMessage[1].length; i++) {
+                        const ignoreColumn = ignoreMessage[1][i];
                         if (ignoreColumn[0] <= message.column && ignoreColumn[1] >= message.column) {
                             return false;
                         }
