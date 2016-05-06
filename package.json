@@ -1,7 +1,7 @@
 {
   "name": "textlint-plugin-satsuki",
   "description": "Satsuki notation support for textlint",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "Jun-ya HASEBA",
   "bugs": {
     "url": "https://github.com/7pairs/textlint-plugin-satsuki/issues"
