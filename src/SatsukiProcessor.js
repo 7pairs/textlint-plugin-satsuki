@@ -57,11 +57,11 @@ export default class SatsukiProcessor {
                 let inBlock = false;
                 let endTag = null;
                 for (let i = 0; i < result.children.length; i++) {
-                    const element = result.children[i];
+                    const node = result.children[i];
                     if (!inBlock) {
                         for (let j = 0; j < SatsukiProcessor.BLOCK_TAGS.length; j++) {
                             const blockTag = SatsukiProcessor.BLOCK_TAGS[j];
-                            if (element.raw.match(blockTag[0])) {
+                            if (node.raw.match(blockTag[0])) {
                                 inBlock = true;
                                 endTag = blockTag[1];
                                 break;
@@ -69,15 +69,15 @@ export default class SatsukiProcessor {
                         }
                     }
                     if (inBlock) {
-                        if (element.raw === endTag) {
+                        if (node.raw === endTag) {
                             inBlock = false;
                         }
-                        this.ignoreMessages[element.loc.start.line - 1][0] = true;
+                        this.ignoreMessages[node.loc.start.line - 1][0] = true;
                     } else {
                         const inlineTagPattern = /\[[^\]]+\]/g;
                         let inlineTag = null;
-                        while (inlineTag = inlineTagPattern.exec(element.raw)) {
-                            this.ignoreMessages[element.loc.start.line - 1][1].push(
+                        while (inlineTag = inlineTagPattern.exec(node.raw)) {
+                            this.ignoreMessages[node.loc.start.line - 1][1].push(
                                 [inlineTag.index + 1, inlineTagPattern.lastIndex]
                             );
                         }
