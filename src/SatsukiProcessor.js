@@ -30,18 +30,18 @@ export default class SatsukiProcessor {
         ];
     }
 
-    static get TAGS() {
+    static get BLOCK_TAGS() {
         return [
-            [/>>/, "<<"],
-            [/>>\|/, "|<<"],
-            [/>>\|\|/, "||<<"],
-            [/>>\[https?:\/\/[^\]]+\]/, "<<"],
-            [/>https?:\/\/[^>]+>/, "<<"],
-            [/>\|/, "|<"],
-            [/>\|\|/, "||<"],
-            [/>\|\|#/, "#||<"],
-            [/>\|\?\|/, "||<"],
-            [/>\|[^\|]+\|/, "||<"]
+            [/^>>$/, "<<"],
+            [/^>>\|$/, "|<<"],
+            [/^>>\|\|$/, "||<<"],
+            [/^>>\[https?:\/\/[^\]]+\]$/, "<<"],
+            [/^>https?:\/\/[^>]+>$/, "<<"],
+            [/^>\|$/, "|<"],
+            [/^>\|\|$/, "||<"],
+            [/^>\|\|#$/, "#||<"],
+            [/^>\|\?\|$/, "||<"],
+            [/^>\|[^\|]+\|$/, "||<"]
         ];
     }
 
@@ -49,37 +49,60 @@ export default class SatsukiProcessor {
         return {
             preProcess: (text, filePath) => {
                 const result = parse(text);
-                this.ignoreLines = new Array(result.loc.end.line);
+                this.ignoreMessages = new Array(result.loc.end.line);
+                for (let i = 0; i < this.ignoreMessages.length; i++) {
+                    this.ignoreMessages[i] = [false, []];
+                }
 
-                let isBlock = false;
+                let inBlock = false;
                 let endTag = null;
                 for (let i = 0; i < result.children.length; i++) {
-                    if (!isBlock) {
-                        for (let j = 0; j < SatsukiProcessor.TAGS.length; j++) {
-                            if (result.children[i].raw.match(SatsukiProcessor.TAGS[j][0])) {
-                                isBlock = true;
-                                endTag = SatsukiProcessor.TAGS[j][1];
+                    const node = result.children[i];
+                    if (!inBlock) {
+                        for (let j = 0; j < SatsukiProcessor.BLOCK_TAGS.length; j++) {
+                            const blockTag = SatsukiProcessor.BLOCK_TAGS[j];
+                            if (node.raw.match(blockTag[0])) {
+                                inBlock = true;
+                                endTag = blockTag[1];
                                 break;
                             }
                         }
                     }
-                    if (isBlock) {
-                        if (result.children[i].raw === endTag) {
-                            isBlock = false;
+                    if (inBlock) {
+                        if (node.raw === endTag) {
+                            inBlock = false;
                         }
-                        this.ignoreLines[result.children[i].loc.start.line - 1] = true;
+                        this.ignoreMessages[node.loc.start.line - 1][0] = true;
+                    } else {
+                        const inlineTagPattern = /\[[^\]]+\]/g;
+                        let inlineTag = null;
+                        while (inlineTag = inlineTagPattern.exec(node.raw)) {
+                            this.ignoreMessages[node.loc.start.line - 1][1].push(
+                                [inlineTag.index + 1, inlineTagPattern.lastIndex]
+                            );
+                        }
                     }
                 }
 
                 return result;
             },
             postProcess: (messages, filePath) => {
-                const validMessages = messages.filter((message) => {
-                    return this.ignoreLines[message.line - 1] !== true;
+                const activeMessages = messages.filter((message) => {
+                    const ignoreMessage = this.ignoreMessages[message.line - 1];
+                    if (ignoreMessage[0]) {
+                        return false;
+                    }
+                    for (let i = 0; i < ignoreMessage[1].length; i++) {
+                        const ignoreColumn = ignoreMessage[1][i];
+                        if (ignoreColumn[0] <= message.column && ignoreColumn[1] >= message.column) {
+                            return false;
+                        }
+                    }
+                    return true;
                 });
 
                 return {
-                    messages: validMessages,
+                    messages: activeMessages,
                     filePath: filePath ? filePath : "<text>"
                 };
             }

@@ -1,39 +1,11 @@
 {
   "name": "textlint-plugin-satsuki",
-  "version": "1.0.0",
   "description": "Satsuki notation support for textlint",
-  "main": "lib/index.js",
-  "files": [
-    "lib",
-    "src",
-    "test"
-  ],
-  "directories": {
-    "test": "test"
-  },
-  "scripts": {
-    "build": "babel src --out-dir lib --source-maps",
-    "prepublish": "npm run build",
-    "test": "mocha",
-    "coverage": "babel-node ./node_modules/isparta/bin/isparta cover ./node_modules/mocha/bin/_mocha",
-    "precoveralls": "npm run coverage",
-    "coveralls": "coveralls < coverage/lcov.info"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/7pairs/textlint-plugin-satsuki.git"
-  },
-  "keywords": [
-    "textlint",
-    "plugin",
-    "satsuki"
-  ],
+  "version": "1.0.0",
   "author": "Jun-ya HASEBA",
-  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/7pairs/textlint-plugin-satsuki/issues"
   },
-  "homepage": "https://github.com/7pairs/textlint-plugin-satsuki",
   "dependencies": {
     "txt-to-ast": "^1.1.0"
   },
@@ -49,5 +21,33 @@
     "power-assert": "^1.3.1",
     "textlint": "^6.3.0",
     "textlint-rule-no-todo": "^2.0.0"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "files": [
+    "lib",
+    "src",
+    "test"
+  ],
+  "homepage": "https://github.com/7pairs/textlint-plugin-satsuki",
+  "keywords": [
+    "textlint",
+    "plugin",
+    "satsuki"
+  ],
+  "license": "Apache-2.0",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/7pairs/textlint-plugin-satsuki.git"
+  },
+  "scripts": {
+    "build": "babel src --out-dir lib --source-maps",
+    "prepublish": "npm run build",
+    "test": "mocha",
+    "coverage": "babel-node ./node_modules/isparta/bin/isparta cover ./node_modules/mocha/bin/_mocha",
+    "precoveralls": "npm run coverage",
+    "coveralls": "coveralls < coverage/lcov.info"
   }
 }
