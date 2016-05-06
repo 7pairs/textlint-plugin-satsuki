@@ -249,4 +249,13 @@ describe("SatsukiProcessor", function () {
             });
         });
     });
+    context("when target is inline tag", function () {
+        it("should no error", function () {
+            const target =
+                "[TODO: this is todo]\n";
+            return textlint.lintText(target, ".txt").then((result) => {
+                assert(result.messages.length === 0);
+            });
+        });
+    });
 });
