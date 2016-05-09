@@ -89,6 +89,9 @@ export default class SatsukiProcessor {
             postProcess: (messages, filePath) => {
                 const activeMessages = messages.filter((message) => {
                     const ignoreMessage = this.ignoreMessages[message.line - 1];
+                    if (typeof ignoreMessage === "undefined") {
+                        return true;
+                    }
                     if (ignoreMessage[0]) {
                         return false;
                     }
