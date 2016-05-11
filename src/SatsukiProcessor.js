@@ -22,6 +22,7 @@ export default class SatsukiProcessor {
 
     constructor(config) {
         this.config = config;
+        this.ignoreMessagesMap = {};
     }
 
     static availableExtensions() {
@@ -49,9 +50,9 @@ export default class SatsukiProcessor {
         return {
             preProcess: (text, filePath) => {
                 const result = parse(text);
-                this.ignoreMessages = new Array(result.loc.end.line);
-                for (let i = 0; i < this.ignoreMessages.length; i++) {
-                    this.ignoreMessages[i] = [false, []];
+                let ignoreMessages = new Array(result.loc.end.line);
+                for (let i = 0; i < ignoreMessages.length; i++) {
+                    ignoreMessages[i] = [false, []];
                 }
 
                 let inBlock = false;
@@ -72,23 +73,25 @@ export default class SatsukiProcessor {
                         if (node.raw === endTag) {
                             inBlock = false;
                         }
-                        this.ignoreMessages[node.loc.start.line - 1][0] = true;
+                        ignoreMessages[node.loc.start.line - 1][0] = true;
                     } else {
                         const inlineTagPattern = /\[[^\]]+\]/g;
                         let inlineTag = null;
                         while (inlineTag = inlineTagPattern.exec(node.raw)) {
-                            this.ignoreMessages[node.loc.start.line - 1][1].push(
+                            ignoreMessages[node.loc.start.line - 1][1].push(
                                 [inlineTag.index + 1, inlineTagPattern.lastIndex]
                             );
                         }
                     }
                 }
 
+                this.ignoreMessagesMap[filePath] = ignoreMessages;
+
                 return result;
             },
             postProcess: (messages, filePath) => {
                 const activeMessages = messages.filter((message) => {
-                    const ignoreMessage = this.ignoreMessages[message.line - 1];
+                    const ignoreMessage = this.ignoreMessagesMap[filePath][message.line - 1];
                     if (typeof ignoreMessage === "undefined") {
                         return true;
                     }
